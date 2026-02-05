@@ -1,0 +1,1 @@
+export type BtnState = "idle" | "Loading" | "error";
