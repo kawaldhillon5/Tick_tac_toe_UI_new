@@ -3,7 +3,7 @@ import type { TypedSocket } from '../types/socket';
 
 const URL = import.meta.env.VITE_WS_URL || "http://localhost:3000";
 
-export class SocketService {
+class SocketService {
 
     public socket: TypedSocket;
 
@@ -17,7 +17,6 @@ export class SocketService {
     public connect(gamerId: string | null): void {
         if (this.socket.connected) return;
 
-        // If we have a gamerId, attach it. If not, the server will see 'undefined' and generate one.
         if (gamerId) {
             this.socket.auth = { gamerId };
         }
