@@ -23,7 +23,7 @@ export interface ServerToClientEvents {
     winningArray: {row:number, col: number}[] | null
   }) => void;
   game_update: (data: { board: Board; currentTurn: string | null }) => void;
-  game_over: (data: { status: 'won' | 'draw',  winnerId: string | null; winningArray: {row:number, col: number}[] | null }) => void;
+  game_over: (data: {board: Board, status: 'won' | 'draw',  winnerId: string | null; winningArray: {row:number, col: number}[] | null }) => void;
   error: (data: { message: string;}) => void;
 }
 
