@@ -24,6 +24,7 @@ export const Home = ()=>{
         })
 
         return ()=>{
+            socket.off('game_start');
         }
     },[socket]);
 
