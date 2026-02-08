@@ -4,6 +4,8 @@ import { useParams } from "react-router-dom";
 import { useGameConext } from "../contexts/gameContext"; // Fix typo in your filename later ;)
 import type { Board, GameRow, Opponent, Player } from "../types/game";
 
+import "../styles/game.css";
+
 export const Game = () => {
     const { gameId } = useParams();
     const { socket, isConnected, gamerId } = useGameConext();
@@ -98,12 +100,14 @@ export const Game = () => {
 
 
     // 2. UI: Handle Clicks
-    const handleCellClick = (rowIndex: number, colIndex: number) => {
+    const handleCellClick = ( e: React.MouseEvent<HTMLDivElement> ,rowIndex: number, colIndex: number) => {
         if (!socket || !gameId || !gamerId || !gameobj) return;
         
         if (gameobj.current_turn !== gamerId ) return;
         
         if (gameobj.winner) return;
+
+        e.currentTarget.classList.remove("mark-on-hover")
 
         socket.emit("make_move", { 
             gameId, 
@@ -113,6 +117,31 @@ export const Game = () => {
         });
     };
 
+    const handleMouseOver = (e: React.MouseEvent<HTMLDivElement>) =>{
+
+        const mark = opponent?.gamerId == gameobj?.current_turn ? "" : gameobj?.mark
+        if(!mark || e.currentTarget.innerText) return;       
+        e.currentTarget.innerText = mark;
+        e.currentTarget.classList.add("mark-on-hover"); 
+    }
+
+    const handleMouseOut = (e: React.MouseEvent<HTMLDivElement>) =>{
+        if(e.currentTarget.classList.contains("mark-on-hover")){
+            e.currentTarget.innerText = ""
+            e.currentTarget.classList.remove("mark-on-hover")
+        }       
+    }
+
+    const generateClassName = (colIndex: number, rowIndex: number)=>{
+            let clsName = ""
+            gameobj?.winningArray?.forEach(data => {
+            if(data.col === colIndex && data.row === rowIndex){
+                console.log(data.col === colIndex && data.row === rowIndex)
+                clsName = "cell-highlighted"
+            } 
+        });
+        return clsName;
+    }
     return (
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '20px' }}>
             <h1>Tic Tac Toe</h1>
@@ -126,16 +155,12 @@ export const Game = () => {
                     row.map((cell, colIndex) => (
                         <div 
                             key={`${rowIndex}-${colIndex}`}
-                            onClick={() => handleCellClick(rowIndex, colIndex)}
+                            onClick={(e: React.MouseEvent<HTMLDivElement>) => handleCellClick(e, rowIndex, colIndex)}
+                            onMouseOver={handleMouseOver}
+                            onMouseOut={handleMouseOut}
+                            className={`game-cell ${generateClassName(colIndex, rowIndex)}`}
                             style={{
-                                width: '100px',
-                                height: '100px',
-                                display: 'flex',
-                                alignItems: 'center',
-                                justifyContent: 'center',
-                                fontSize: '40px',
-                                border: '1px solid black',
-                                cursor: gameobj.current_turn == gamerId && !cell ? 'pointer' : 'default',
+                                cursor: gameobj.current_turn == gamerId && !cell && !gameobj.winner ? 'pointer' : 'default',
                                 backgroundColor: cell ? '#f0f0f0' : 'white'
                             }}
                         >
