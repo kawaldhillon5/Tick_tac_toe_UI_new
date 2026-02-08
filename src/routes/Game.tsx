@@ -41,7 +41,7 @@ export const Game = () => {
 
             if (data.status === 'won') {
                 gameStatus = data.winner === gamerId ? "You Won!" : "You Lost";
-            } else if(data.status = "ongoing"){
+            } else if(data.status == "ongoing"){
                gameStatus = data.currentTurn === gamerId ? "Your Turn" : "Opponent's Turn";
             } else {
                 gameStatus = data.status
@@ -60,7 +60,7 @@ export const Game = () => {
             setOpponent({gamerId: data.opponent?.gamerId, isActive: true});
         };
 
-        const handleGameOver = (data: { status: 'won' | 'draw', winnerId: string | null, winningArray: {row:number, col: number}[] | null }) => {
+        const handleGameOver = (data: {board: Board ,status: 'won' | 'draw', winnerId: string | null, winningArray: {row:number, col: number}[] | null }) => {
             console.log("Game-Over Fired");
             console.log(data.winningArray);
             let gameStatus = "";
@@ -76,6 +76,7 @@ export const Game = () => {
                 if (!prev) return null;
                 return {
                     ...prev,
+                    board: data.board,
                     status: gameStatus,
                     winner: data.winnerId,
                     winningArray: data.winningArray,
@@ -90,7 +91,7 @@ export const Game = () => {
         // Cleanup
         return () => {
             socket.off("game_update", handleUpdate);
-            socket.off("game_state", handleUpdate);
+            socket.off("game_state", handleGameState);
             socket.off("game_over", handleGameOver);
         };
     }, [socket, isConnected, gameId, gamerId]);
