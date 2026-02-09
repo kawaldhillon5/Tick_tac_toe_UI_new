@@ -13,6 +13,9 @@ export const Game = () => {
     //Game State
     const [gameobj, setGameObj] = useState<null | GameRow>(null);    
     const [opponent, setOpponent] = useState<null | Opponent>(null);
+
+    const [deadline, setDeadline] = useState<number | null>(null);
+    const [timeLeft, setTimeLeft] = useState<number>(0);
     // MOUNT: Re-Join / Sync Logic
     useEffect(() => {
         if (!socket || !isConnected || !gameId) return;
@@ -21,7 +24,8 @@ export const Game = () => {
         socket.emit("join_game", { gameId });
 
         // B. Listen for updates
-        const handleUpdate = (data: { board: Board; currentTurn: string | null }) => {
+        const handleUpdate = (data: {turnDeadline:number, board: Board; currentTurn: string | null }) => {
+            setDeadline(data.turnDeadline);
             setGameObj(prev =>{
                 if(!prev) return null;
                 return {...prev, current_turn: data.currentTurn, board: data.board, status: prev.winner ? prev.status : (data.currentTurn === gamerId) ? "Your Turn" : "Opponent's Turn" }
@@ -34,7 +38,8 @@ export const Game = () => {
             opponent: Player | null,
             status: 'waiting' | 'ongoing' | 'won' | 'draw', 
             winner: string | null,
-            winningArray: {row:number, col: number}[] | null
+            winningArray: {row:number, col: number}[] | null,
+            turnDeadline: number | null,
         }) => {
             console.log("Game_state fired");
             console.log(data);
@@ -48,6 +53,7 @@ export const Game = () => {
             } else {
                 gameStatus = data.status
             }
+            if (data.turnDeadline) setDeadline(data.turnDeadline);
             
             setGameObj({
                     id: gameId,
@@ -142,13 +148,44 @@ export const Game = () => {
         });
         return clsName;
     }
+
+
+    useEffect(() => {
+        if (!deadline) {
+            setTimeLeft(0);
+            return;
+        }
+
+        if(gameobj?.winner){
+            setDeadline(null);
+            setTimeLeft(0);
+            return;
+        }
+
+        console.log("Dealine",deadline);
+
+        const interval = setInterval(() => {
+            const delta = deadline - Date.now();
+            const seconds = Math.ceil(delta / 1000);
+            
+            if (seconds <= 0) {
+                setTimeLeft(0);
+                clearInterval(interval);
+            } else {
+                setTimeLeft(seconds);
+            }
+        }, 100);
+
+        return () => clearInterval(interval);
+    }, [deadline, gameobj?.winner]);
+
     return (
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '20px' }}>
             <h1>Tic Tac Toe</h1>
             <h2>Gamer Id: {gamerId}</h2>
             <h2>Oppoenent: {opponent?.gamerId} <span>{opponent?.isActive ? "Online" : "Offline"}</span></h2>            
             <h2>{gameobj?.status}</h2>
-
+            {deadline && <h2>Time Left: {timeLeft}s</h2>}
             
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 100px)', gap: '5px' }}>
                 {gameobj?.board.map((row, rowIndex: number) => (
