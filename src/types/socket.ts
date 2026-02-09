@@ -12,7 +12,7 @@ export interface ClientToServerEvents {
 // 2. Events the SERVER sends to the CLIENT
 export interface ServerToClientEvents {
   session: (data: { gamerId: string; }) => void;
-  game_start: (data: { gameId: string;}) => void;
+  game_start: (data: { gameId: string; turnDeadline: number}) => void;
   game_state: (data: { 
     gameId: string;
     board: Board;
@@ -20,9 +20,10 @@ export interface ServerToClientEvents {
     opponent: Player | null;
     status: 'waiting' | 'ongoing' | 'won' | 'draw';
     winner: string | null;
-    winningArray: {row:number, col: number}[] | null
+    winningArray: {row:number, col: number}[] | null;
+    turnDeadline: number | null;
   }) => void;
-  game_update: (data: { board: Board; currentTurn: string | null }) => void;
+  game_update: (data: { board: Board; currentTurn: string | null; turnDeadline: number }) => void;
   game_over: (data: {board: Board, status: 'won' | 'draw',  winnerId: string | null; winningArray: {row:number, col: number}[] | null }) => void;
   error: (data: { message: string;}) => void;
 }
