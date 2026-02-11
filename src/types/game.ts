@@ -24,3 +24,12 @@ export interface GameRow {
 
 }
 
+export interface GameHistoryRow {
+    id: string;
+    player1: Player;       
+    player2: Player;        
+    status:  string;
+    winner: Player;  
+    created_at: number;
+}
+
