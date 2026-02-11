@@ -1,5 +1,5 @@
 import { Socket } from "socket.io-client";
-import type { Board, Player } from "./game";
+import type { Board, GameHistoryRow, Player } from "./game";
 
 // 1. Events the CLIENT sends to the SERVER
 export interface ClientToServerEvents {
@@ -7,12 +7,14 @@ export interface ClientToServerEvents {
   leave_queue: () => void;
   join_game : (data:{gameId: string}) => void,
   make_move: (data: { gameId: string; row: number, col: number, player: string }) => void;
+  game_history: (data: {gamerId:string}) => void;
 }
 
 // 2. Events the SERVER sends to the CLIENT
 export interface ServerToClientEvents {
   session: (data: { gamerId: string; }) => void;
   game_start: (data: { gameId: string; turnDeadline: number}) => void;
+  game_history : (data : {games:GameHistoryRow[]}) => void;  
   game_state: (data: { 
     gameId: string;
     board: Board;
