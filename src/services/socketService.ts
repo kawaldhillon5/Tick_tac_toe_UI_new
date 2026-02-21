@@ -20,7 +20,6 @@ class SocketService {
         if (gamerId) {
             this.socket.auth = { gamerId };
         }
-
         this.socket.connect();
     }
 

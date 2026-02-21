@@ -33,3 +33,8 @@ export interface GameHistoryRow {
     created_at: number;
 }
 
+export interface Scores {
+    myWins: number;
+    opponentWins: number;
+    draws: number;
+}

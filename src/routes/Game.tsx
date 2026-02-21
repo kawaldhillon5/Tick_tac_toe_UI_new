@@ -2,7 +2,7 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { useGameConext } from "../contexts/gameContext"; // Fix typo in your filename later ;)
-import type { Board, GameRow, Opponent, Player } from "../types/game";
+import type { Board, GameRow, Opponent, Player, Scores } from "../types/game";
 
 import "../styles/game.css";
 
@@ -17,6 +17,14 @@ export const Game = () => {
     const [deadline, setDeadline] = useState<number | null>(null);
     const [timeLeft, setTimeLeft] = useState<number>(0);
     // MOUNT: Re-Join / Sync Logic
+
+    const [scores, setScores] = useState<Scores | null>(null);
+
+    useEffect(()=>{
+        if(!socket || !opponent?.gamerId) return;
+        socket.emit("get_score",{opponentId : opponent?.gamerId});
+    },[opponent, gameobj?.winner ])
+
     useEffect(() => {
         if (!socket || !isConnected || !gameId) return;
 
@@ -92,15 +100,19 @@ export const Game = () => {
             })
         };
 
+        
+
         socket.on("game_update", handleUpdate);
         socket.on("game_state", handleGameState); 
         socket.on("game_over", handleGameOver);
+        socket.on("score_data", async (data) => {console.log("Got Scores");setScores(data);});
 
         // Cleanup
         return () => {
             socket.off("game_update", handleUpdate);
             socket.off("game_state", handleGameState);
             socket.off("game_over", handleGameOver);
+            socket.off("score_data");
         };
     }, [socket, isConnected, gameId, gamerId]);
 
@@ -183,7 +195,8 @@ export const Game = () => {
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '20px' }}>
             <h1>Tic Tac Toe</h1>
             <h2>Gamer Id: {gamerId}</h2>
-            <h2>Oppoenent: {opponent?.gamerId} <span>{opponent?.isActive ? "Online" : "Offline"}</span></h2>            
+            <h2>Oppoenent: {opponent?.gamerId} <span>{opponent?.isActive ? "Online" : "Offline"}</span></h2> 
+            <div>{`Games Won: ${scores?.myWins}, Games Lost: ${scores?.opponentWins}, Draws: ${scores?.draws}`}</div>           
             <h2>{gameobj?.status}</h2>
             {deadline && <h2>Time Left: {timeLeft}s</h2>}
             

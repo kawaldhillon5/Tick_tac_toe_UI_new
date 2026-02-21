@@ -16,7 +16,7 @@ export const GameProvider = ({ children }: { children: React.ReactNode }) => {
 
         const storedGamerId = localStorage.getItem('ticTacToeGamerId');
         socketService.connect(storedGamerId);
-
+        
 
         socket.on("session", (data)=>{
             localStorage.setItem('ticTacToeGamerId', data.gamerId);
