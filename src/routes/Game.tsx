@@ -192,11 +192,16 @@ export const Game = () => {
     }, [deadline, gameobj?.winner]);
 
     return (
-        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '20px' }}>
-            <h1>Tic Tac Toe</h1>
-            <h2>Gamer Id: {gamerId}</h2>
-            <h2>Oppoenent: {opponent?.gamerId} <span>{opponent?.isActive ? "Online" : "Offline"}</span></h2> 
-            <div>{`Games Won: ${scores?.myWins}, Games Lost: ${scores?.opponentWins}, Draws: ${scores?.draws}`}</div>           
+        <div id="game-route">
+            <div className="game-opponent-div">
+                <h2>Opponent</h2>
+                <div className="opponent-info">{opponent?.gamerId} <div className={`opponent-status ${opponent?.isActive ? "Online" : null}`}></div></div> 
+            </div>          
+            <div className="scores-div">
+                <div>{`Games Won: ${scores?.myWins}`}</div>
+                <div>{`Games Lost: ${scores?.opponentWins}`}</div>
+                <div>{`Draws: ${scores?.draws}`}</div>
+            </div> 
             <h2>{gameobj?.status}</h2>
             {deadline && <h2>Time Left: {timeLeft}s</h2>}
             
@@ -208,10 +213,9 @@ export const Game = () => {
                             onClick={(e: React.MouseEvent<HTMLDivElement>) => handleCellClick(e, rowIndex, colIndex)}
                             onMouseOver={handleMouseOver}
                             onMouseOut={handleMouseOut}
-                            className={`game-cell ${generateClassName(colIndex, rowIndex)}`}
+                            className={`game-cell ${generateClassName(colIndex, rowIndex)} ${cell ? 'full' : 'empty'}`}
                             style={{
                                 cursor: gameobj.current_turn == gamerId && !cell && !gameobj.winner ? 'pointer' : 'default',
-                                backgroundColor: cell ? '#f0f0f0' : 'white'
                             }}
                         >
                             {cell}
