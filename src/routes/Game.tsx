@@ -105,7 +105,10 @@ export const Game = () => {
         socket.on("game_update", handleUpdate);
         socket.on("game_state", handleGameState); 
         socket.on("game_over", handleGameOver);
-        socket.on("score_data", async (data) => {console.log("Got Scores");setScores(data);});
+        socket.on("score_data", (data) => {console.log("Got Scores");setScores(data);});
+        socket.on("opponent_status", (data) => {
+            setOpponent((prev) => prev ? { ...prev, isActive: data.isActive } : prev);
+        });
 
         // Cleanup
         return () => {
@@ -168,7 +171,7 @@ export const Game = () => {
             return;
         }
 
-        if(gameobj?.winner){
+        if(gameobj?.winner || gameobj?.status == "draw" || gameobj?.status == "won"){
             setDeadline(null);
             setTimeLeft(0);
             return;
@@ -189,7 +192,7 @@ export const Game = () => {
         }, 100);
 
         return () => clearInterval(interval);
-    }, [deadline, gameobj?.winner]);
+    }, [deadline, gameobj?.winner, gameobj?.status]);
 
     return (
         <div id="game-route">

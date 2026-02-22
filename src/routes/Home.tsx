@@ -73,7 +73,7 @@ export const Home = ()=>{
                                 <>
                                     <p className="previous-games-list-item-item">{gamerId == game.player1.gamerId ? game.player2.gamerId : game.player1.gamerId}</p>
                                     <p className="previous-games-list-item-item">{game.status}</p>
-                                    {game.winner && <p className="previous-games-list-item-item"> {gamerId == game.winner.gamerId ? "You" : "Opponent"}</p>}
+                                    {game.winner ? <p className="previous-games-list-item-item"> {gamerId == game.winner.gamerId ? "You" : "Opponent"}</p> : <p>None</p>}
                                     <p className="previous-games-list-item-item">{new Date(game.created_at).toLocaleDateString()}</p>
                                 </>
                             </Link>

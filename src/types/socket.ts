@@ -9,7 +9,6 @@ export interface ClientToServerEvents {
   make_move: (data: { gameId: string; row: number, col: number, player: string }) => void;
   game_history: (data: {gamerId:string}) => void;
   get_score : (data:{ opponentId: string}) =>void;
-
 }
 
 // 2. Events the SERVER sends to the CLIENT
@@ -31,6 +30,7 @@ export interface ServerToClientEvents {
   game_over: (data: {board: Board, status: 'won' | 'draw',  winnerId: string | null; winningArray: {row:number, col: number}[] | null }) => void;
   error: (data: { message: string;}) => void;
   score_data : (data: Scores) => void
+  opponent_status : (data: {isActive: boolean}) => void;
 
 }
 
