@@ -29,8 +29,7 @@ html,body{
 
 }
 
-.find-match-btn{
-    margin-top: 100px;
+.find-match-btn,.cancel-btn{
     font-size: 20px;
     padding: 10px;
     border: 1px solid transparent;
@@ -41,6 +40,10 @@ html,body{
     display: flex;
     align-items: center;
     justify-content: center;
+}
+
+.find-match-btn{
+    margin-top: 100px;
 }
 
 .find-match-btn:hover{

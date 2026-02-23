@@ -10,6 +10,7 @@ export const Home = ()=>{
 
     const {gamerId, socket} =  useGameConext();
     const [btnState, setBtnState] =  useState<BtnState>("idle")
+    const [cancleBtnState, setCancelBtnState] = useState<boolean>(false);
 
     const [previousGames, setPreviousGames] = useState< GameHistoryRow[] | null>(null);
 
@@ -20,6 +21,15 @@ export const Home = ()=>{
 
         setBtnState("Loading");
         socket.emit("join_queue");
+        setCancelBtnState(true);
+    }
+
+    const handleLeaveQueue = ()=>{
+        if (!socket || btnState != "Loading") return;
+
+        socket.emit("leave_queue");
+        setBtnState("idle");
+        setCancelBtnState(false);
     }
     
     useEffect(()=>{
@@ -55,7 +65,11 @@ export const Home = ()=>{
                 { btnState == "idle" && "Find Match"}
                 { btnState == "Loading" && <LoaderCircleIcon/>}
                 { btnState == "error" && <CircleAlertIcon /> }
-                </button>
+            </button>
+
+            {cancleBtnState && <button className={`cancel-btn`} onClick={handleLeaveQueue}>
+                Cancel
+            </button>}
 
             <div className="previous-games-list">
                 {
