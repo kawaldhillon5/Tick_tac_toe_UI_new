@@ -1,10 +1,12 @@
 // client/src/routes/Game.tsx
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useGameConext } from "../contexts/gameContext"; // Fix typo in your filename later ;)
 import type { Board, GameRow, Opponent, Player, Scores } from "../types/game";
 
 import "../styles/game.css";
+import type { BtnState } from "../types/app";
+import { CircleAlertIcon, LoaderCircleIcon } from "lucide-react";
 
 export const Game = () => {
     const { gameId } = useParams();
@@ -17,8 +19,10 @@ export const Game = () => {
     const [deadline, setDeadline] = useState<number | null>(null);
     const [timeLeft, setTimeLeft] = useState<number>(0);
     // MOUNT: Re-Join / Sync Logic
-
+    const [restartBtnStatus, setRestartBtnStatus] = useState<BtnState | "Awaiting" | null>(null);
     const [scores, setScores] = useState<Scores | null>(null);
+
+    const navigate = useNavigate();
 
     useEffect(()=>{
         if(!socket || !opponent?.gamerId) return;
@@ -97,7 +101,8 @@ export const Game = () => {
                     winner: data.winnerId,
                     winningArray: data.winningArray,
                 }
-            })
+            });
+            setRestartBtnStatus("idle");
         };
 
         
@@ -109,6 +114,10 @@ export const Game = () => {
         socket.on("opponent_status", (data) => {
             setOpponent((prev) => prev ? { ...prev, isActive: data.isActive } : prev);
         });
+        socket.on("re_match_req_sent", ()=>{setRestartBtnStatus("Awaiting")});
+        socket.on("game_start", data =>{
+            navigate(`/game/${data.gameId}`);
+        });
 
         // Cleanup
         return () => {
@@ -116,6 +125,9 @@ export const Game = () => {
             socket.off("game_state", handleGameState);
             socket.off("game_over", handleGameOver);
             socket.off("score_data");
+            socket.off("opponent_status");
+            socket.off("game_start");
+            socket.off("re_match_req_sent");
         };
     }, [socket, isConnected, gameId, gamerId]);
 
@@ -162,6 +174,13 @@ export const Game = () => {
             } 
         });
         return clsName;
+    }
+
+    const handleRequestReMatch = ()=>{
+        if (!socket || !(restartBtnStatus == "idle") || !gameId || !opponent?.gamerId) return;
+
+        setRestartBtnStatus("Loading");
+        socket.emit("re_match_request", {gameId: gameId, opponentId:  opponent.gamerId});
     }
 
 
@@ -226,6 +245,12 @@ export const Game = () => {
                     ))
                 ))}
             </div>
+            {restartBtnStatus && <button className={`find-match-btn ${restartBtnStatus}`} onClick={handleRequestReMatch}>
+                { restartBtnStatus == "idle" && "Request Re-Match"}
+                { restartBtnStatus == "Awaiting" && "Awaiting"}
+                { restartBtnStatus == "Loading" && <LoaderCircleIcon/>}
+                { restartBtnStatus == "error" && <CircleAlertIcon /> }
+            </button>}
         </div>
     );
 };
