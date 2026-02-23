@@ -111,6 +111,7 @@ export const Game = () => {
         });
         socket.on("re_match_req_sent", ()=>{setRestartBtnStatus("Awaiting")});
         socket.on("game_start", data =>{
+            setRestartBtnStatus(null);
             navigate(`/game/${data.gameId}`);
         });
 

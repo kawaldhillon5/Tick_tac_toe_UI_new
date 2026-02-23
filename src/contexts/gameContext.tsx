@@ -3,6 +3,7 @@ import type { GameContextType } from "../types/context";
 import socketService from "../services/socketService";
 
 
+
 const GameContext = createContext<GameContextType>({} as GameContextType);
 
 export const GameProvider = ({ children }: { children: React.ReactNode }) => {
@@ -31,6 +32,8 @@ export const GameProvider = ({ children }: { children: React.ReactNode }) => {
             setIsConnected(false);
         }));
 
+        socket.on("error",(data)=>{console.log(data.message)});
+
 
         return () => {
             socketService.disconnect();
@@ -38,6 +41,7 @@ export const GameProvider = ({ children }: { children: React.ReactNode }) => {
             socket.off("session");
             socket.off('connect');
             socket.off("disconnect")
+            socket.off("error");
         };
     }, []);
 
