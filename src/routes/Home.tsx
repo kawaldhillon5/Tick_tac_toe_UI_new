@@ -16,7 +16,7 @@ export const Home = ()=>{
     const navigate  = useNavigate();
 
     const handleFindMatch = ()=>{
-        if (!socket) return;
+        if (!socket || btnState == "Loading") return;
 
         setBtnState("Loading");
         socket.emit("join_queue");
