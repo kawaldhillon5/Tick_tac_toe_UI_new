@@ -53,9 +53,6 @@ export const Game = () => {
             winningArray: {row:number, col: number}[] | null,
             turnDeadline: number | null,
         }) => {
-            console.log("Game_state fired");
-            console.log(data);
-
             let gameStatus = "";
 
             if (data.status === 'won') {
@@ -81,8 +78,6 @@ export const Game = () => {
         };
 
         const handleGameOver = (data: {board: Board ,status: 'won' | 'draw', winnerId: string | null, winningArray: {row:number, col: number}[] | null }) => {
-            console.log("Game-Over Fired");
-            console.log(data.winningArray);
             let gameStatus = "";
 
             if (data.status === 'won') {
@@ -169,7 +164,6 @@ export const Game = () => {
             let clsName = ""
             gameobj?.winningArray?.forEach(data => {
             if(data.col === colIndex && data.row === rowIndex){
-                console.log(data.col === colIndex && data.row === rowIndex)
                 clsName = "cell-highlighted"
             } 
         });
