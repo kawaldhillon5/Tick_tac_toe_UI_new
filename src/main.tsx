@@ -5,6 +5,7 @@ import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import { Home } from './routes/Home';
 import { Game } from './routes/Game';
 import Root from './routes/Root';
+import { PastGame } from './routes/PastGame';
 
 const router = createBrowserRouter([
   {
@@ -18,6 +19,10 @@ const router = createBrowserRouter([
       {
         path: "game/:gameId", 
         element: <Game />,
+      },
+      {
+        path: "past-game/:gameId",
+        element: <PastGame/>
       },
     ],
   },

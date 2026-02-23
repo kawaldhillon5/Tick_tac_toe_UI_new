@@ -69,7 +69,7 @@ export const Home = ()=>{
                         </div>
                         {
                             previousGames.map((game)=>(
-                            <Link className={`previous-games-list-item ${game.status == "ongoing" ? "ongoing": "" }`} key={game.id} to={`/game/${game.id}`}>
+                            <Link className={`previous-games-list-item ${game.status == "ongoing" ? "ongoing": "" }`} key={game.id} to={`/${game.status == "ongoing" ? "game":"past-game"}/${game.id}`}>
                                 <>
                                     <p className="previous-games-list-item-item">{gamerId == game.player1.gamerId ? game.player2.gamerId : game.player1.gamerId}</p>
                                     <p className="previous-games-list-item-item">{game.status}</p>
