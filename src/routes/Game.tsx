@@ -240,7 +240,7 @@ export const Game = () => {
                     ))
                 ))}
             </div>
-            {restartBtnStatus && <button className={`find-match-btn ${restartBtnStatus}`} onClick={handleRequestReMatch}>
+            {restartBtnStatus && <button className={`re-match-btn ${restartBtnStatus}`} onClick={handleRequestReMatch}>
                 { restartBtnStatus == "idle" && "Request Re-Match"}
                 { restartBtnStatus == "Awaiting" && "Awaiting"}
                 { restartBtnStatus == "Loading" && <LoaderCircleIcon/>}

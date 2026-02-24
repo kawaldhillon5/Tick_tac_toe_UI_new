@@ -29,7 +29,7 @@ html,body{
 
 }
 
-.find-match-btn,.cancel-btn{
+.find-match-btn,.cancel-btn,.re-match-btn{
     font-size: 20px;
     padding: 10px;
     border: 1px solid transparent;
@@ -50,7 +50,7 @@ html,body{
     transform: scale(1.1);
 }
 
-.find-match-btn.idle{
+.find-match-btn.idle,.re-match-btn{
     box-shadow: 0 0 10px rgba(87, 238, 41, 0.644);
     background-color: rgba(48, 247, 58, 0.233);
     font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
